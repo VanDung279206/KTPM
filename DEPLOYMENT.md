@@ -34,12 +34,27 @@ Sau khi lưu mật khẩu vào nơi riêng an toàn, có thể xóa biến này;
 Database đang có bảng sẽ không bị ghi đè hoặc đặt lại mật khẩu.
 
 Seed deploy không chứa dữ liệu tài khoản, giỏ hàng, đơn hàng hay thông tin đổi trả từ dump cũ.
-Ảnh upload cũ không có trong repo; tải lại ảnh qua trang quản trị sau khi deploy.
+Repo có 18 ảnh bìa thay thế theo tên sách trong `src/main/resources/covers`.
+Nguồn từng ảnh được ghi trong `covers/sources.json`; script `tools/restore-covers.py` tải lại ảnh khi cần.
+Profile cloud tự sao chép ảnh còn thiếu vào thư mục upload khi khởi động, không ghi đè ảnh đã có.
 Để giữ ảnh qua các lần deploy, gắn volume Railway tại `/app/uploads` hoặc chuyển sang object storage.
 
-Đăng ký/OTP/reset mật khẩu cần cấu hình `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM`;
-các biến tùy chọn khác: `MAIL_HOST` (smtp.gmail.com), `MAIL_PORT` (587).
-Chatbot cần `GROQ_API_KEY`. Nhập những giá trị này trực tiếp trong Railway Variables.
+Railway Trial chặn SMTP; đăng ký/OTP/reset mật khẩu dùng Brevo qua HTTPS:
+
+```dotenv
+MAIL_PROVIDER=brevo
+BREVO_API_KEY=<API key Brevo, nhập trực tiếp trong Railway>
+MAIL_FROM_EMAIL=<email người gửi đã xác minh trong Brevo>
+MAIL_FROM_NAME=Bookish
+GROQ_API_KEY=<API key Groq, nhập trực tiếp trong Railway>
+GROQ_MODEL=openai/gpt-oss-20b
+```
+
+Xác minh sender và quyền gửi transactional email trong tài khoản Brevo trước khi thử đăng ký.
+Backend chỉ báo gửi OTP thành công khi Brevo nhận email; lỗi gửi sẽ hủy thay đổi đăng ký/mã xác minh.
+Khi chạy local hoặc môi trường cho phép SMTP, dùng `MAIL_PROVIDER=smtp` cùng
+`MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM`; tùy chọn `MAIL_HOST` (smtp.gmail.com), `MAIL_PORT` (587).
+Chatbot dùng model Groq cấu hình qua `GROQ_MODEL`; hội thoại tiếp theo cũng nhận danh sách sách hiện tại.
 Không đặt mật khẩu hoặc key trong repo hoặc trong biến `NEXT_PUBLIC_*`.
 
 ## Biến môi trường frontend

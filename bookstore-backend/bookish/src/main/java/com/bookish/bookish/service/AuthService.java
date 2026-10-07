@@ -10,6 +10,7 @@ import com.bookish.bookish.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.bookish.bookish.dto.request.RegisterRequest;
 import com.bookish.bookish.dto.response.CustomerResponse;
 import com.bookish.bookish.entity.Role;
@@ -67,6 +68,7 @@ public class AuthService {
     // =========================================================
     //  REGISTER — tạo user + sinh mã 6 số + gửi mail
     // =========================================================
+    @Transactional
     public CustomerResponse register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USERNAME_EXISTED);
@@ -122,6 +124,7 @@ public class AuthService {
 
 
     //  RESEND — sinh mã mới và gửi lại
+    @Transactional
     public void resendVerificationCode(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -141,6 +144,7 @@ public class AuthService {
 
     //  CHANGE EMAIL BEFORE VERIFY — đổi email khi login bị chặn
 
+    @Transactional
     public void changeEmailBeforeVerify(String username, String password, String newEmail) {
         // 1. Verify user/password để tránh người lạ đổi email người khác
         User user = userRepository.findByUsername(username)
@@ -176,6 +180,7 @@ public class AuthService {
 
 //  FORGOT PASSWORD — sinh mã 6 số gửi mail
 
+    @Transactional
     public void forgotPassword(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));

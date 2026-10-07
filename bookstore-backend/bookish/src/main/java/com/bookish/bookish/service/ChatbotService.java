@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -31,11 +33,13 @@ public class ChatbotService {
     private final ChatbotLogRepository chatbotLogRepository;
     private final UserRepository userRepository;
 
-    @Value("${groq.api.key}")
+    @Value("${groq.api.key:}")
     private String groqApiKey;
 
+    @Value("${groq.api.model:openai/gpt-oss-20b}")
+    private String groqModel;
+
     private static final String GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
-    private static final String MODEL    = "llama-3.1-8b-instant";
 
     // ─── 11 Intent ──────────────────────────────────────────────────────────────
     private enum Intent {
@@ -62,7 +66,7 @@ public class ChatbotService {
             - Đổi trả: trong 2 ngày nếu sách bị lỗi hoặc sai sản phẩm.
             - Hoàn tiền: xử lý trong 3-5 ngày làm việc sau khi xác nhận.
             - Đăng ký: vào trang đăng ký, điền thông tin và xác nhận email.
-            - Quên mật khẩu: trang đăng nhập → "Quên mật khẩu" → nhập email nhận link đặt lại.
+            - Quên mật khẩu: trang đăng nhập → "Quên mật khẩu" → nhập email nhận mã đặt lại gồm 6 chữ số.
             - Lịch sử mua hàng: tài khoản → "Đơn hàng của tôi".
             - Nhập mã giảm giá: tại trang thanh toán (checkout).
             - Hỗ trợ: liên hệ qua chatbot 24/7 hoặc email hỗ trợ.
@@ -183,6 +187,9 @@ public class ChatbotService {
                        List<Map<String, String>> history,
                        boolean isFirstMessage,
                        Integer userId) {
+        if (groqApiKey == null || groqApiKey.isBlank()) {
+            return "Chat hỗ trợ đang được cấu hình. Bạn có thể tìm sách tại trang Cửa hàng.";
+        }
         try {
             String reply;
 
@@ -218,7 +225,7 @@ public class ChatbotService {
             return reply;
 
         } catch (Exception e) {
-            log.error("Chatbot error: {}", e.getMessage(), e);
+            log.warn("Chatbot request failed ({})", e.getClass().getSimpleName());
             return "Xin lỗi, tôi đang gặp sự cố. Vui lòng thử lại!";
         }
     }
@@ -381,9 +388,9 @@ public class ChatbotService {
     // ─── Tin nhắn tiếp theo: giữ nguyên logic cũ ─────────────────────────────────
     private String handleContinueConversation(String message, List<Map<String, String>> history) {
         String systemPrompt = "Bạn là Bookish Assistant - trợ lý tư vấn sách của nhà sách Bookish. "
-                + "Tiếp tục hỗ trợ khách dựa trên thông tin sách và FAQ đã được cung cấp ở đầu cuộc trò chuyện. "
-                + "Chỉ tư vấn sách có trong danh sách đã biết. "
-                + "Thân thiện, ngắn gọn, emoji vừa phải, tiếng Việt.";
+                + "Chỉ tư vấn sách có trong danh sách hiện tại, dùng đúng giá và tồn kho bên dưới. "
+                + "Thân thiện, ngắn gọn, emoji vừa phải, tiếng Việt.\n"
+                + "DANH SÁCH SÁCH HIỆN CÓ:\n" + getBookContext() + "\n" + BOOKISH_FAQ;
         return callGroq(systemPrompt, message, history, 512);
     }
 
@@ -410,14 +417,21 @@ public class ChatbotService {
 
         messages.add(Map.of("role", "user", "content", userMessage));
 
-        Map<String, Object> requestBody = Map.of(
-                "model",       MODEL,
-                "messages",    messages,
-                "temperature", 0.3,
-                "max_tokens",  maxTokens
-        );
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("model", groqModel);
+        requestBody.put("messages", messages);
+        requestBody.put("temperature", 0.3);
+        boolean reasoningModel = groqModel.startsWith("openai/gpt-oss-");
+        requestBody.put("max_completion_tokens", reasoningModel ? Math.max(1536, maxTokens) : maxTokens);
+        if (reasoningModel) {
+            requestBody.put("reasoning_effort", "low");
+            requestBody.put("reasoning_format", "hidden");
+        }
 
-        RestTemplate restTemplate = new RestTemplate();
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(10_000);
+        factory.setReadTimeout(40_000);
+        RestTemplate restTemplate = new RestTemplate(factory);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(groqApiKey);
@@ -432,7 +446,10 @@ public class ChatbotService {
         try {
             List<Map> choices = (List<Map>) response.getBody().get("choices");
             Map<String, Object> msg = (Map<String, Object>) choices.get(0).get("message");
-            return (String) msg.get("content");
+            String content = (String) msg.get("content");
+            return content == null || content.isBlank()
+                    ? "Xin lỗi, tôi không thể trả lời lúc này. Vui lòng thử lại."
+                    : content.trim();
         } catch (Exception e) {
             log.error("Parse Groq response error: {}", e.getMessage());
             return "Xin lỗi, tôi không thể trả lời lúc này.";
