@@ -1,5 +1,8 @@
 # Triển khai Bookish online
 
+Website: https://ktpm-bookish-vandung279206.vercel.app/
+Backend healthcheck: https://bookish-api-production-d1a8.up.railway.app/health
+
 Frontend: Vercel, Root Directory `bookstore-frontend`, preset Next.js.
 Backend: Railway, Root Directory `bookstore-backend/bookish`, Dockerfile, Java 21.
 Database: MySQL trong cùng project Railway.
@@ -8,11 +11,11 @@ Database: MySQL trong cùng project Railway.
 
 ```dotenv
 SPRING_PROFILES_ACTIVE=cloud
-DB_URL=jdbc:mysql://${{MySQL.MYSQLHOST}}:${{MySQL.MYSQLPORT}}/${{MySQL.MYSQLDATABASE}}
+DB_URL=jdbc:mysql://${{MySQL.MYSQLHOST}}:${{MySQL.MYSQLPORT}}/${{MySQL.MYSQLDATABASE}}?allowPublicKeyRetrieval=true
 DB_USERNAME=${{MySQL.MYSQLUSER}}
 DB_PASSWORD=${{MySQL.MYSQLPASSWORD}}
 SERVER_URL=https://${{RAILWAY_PUBLIC_DOMAIN}}
-CORS_ALLOWED_ORIGINS=https://your-frontend.vercel.app
+CORS_ALLOWED_ORIGINS=https://ktpm-bookish-vandung279206.vercel.app
 JWT_SECRET=<chuỗi ngẫu nhiên tối thiểu 32 byte, lưu riêng trong Railway>
 DB_INITIALIZE=true
 BOOTSTRAP_ADMIN_PASSWORD=<mật khẩu ngẫu nhiên, lưu riêng trong Railway>
@@ -25,7 +28,9 @@ Trong Railway Settings đặt Builder = Dockerfile và Healthcheck Path = `/heal
 
 Khi `DB_INITIALIZE=true`, ứng dụng chỉ tạo schema và danh mục sách nếu database hoàn toàn trống.
 Tài khoản `admin` được tạo với `BOOTSTRAP_ADMIN_PASSWORD` tại lần khởi tạo đầu tiên.
-Sau lần khởi tạo thành công, đặt `DB_INITIALIZE=false` và xóa `BOOTSTRAP_ADMIN_PASSWORD`.
+Sau lần khởi tạo thành công, đặt `DB_INITIALIZE=false`.
+Lấy mật khẩu admin tại Railway → bookish-api → Variables → `BOOTSTRAP_ADMIN_PASSWORD`.
+Sau khi lưu mật khẩu vào nơi riêng an toàn, có thể xóa biến này; mật khẩu đã băm trong database không thay đổi.
 Database đang có bảng sẽ không bị ghi đè hoặc đặt lại mật khẩu.
 
 Seed deploy không chứa dữ liệu tài khoản, giỏ hàng, đơn hàng hay thông tin đổi trả từ dump cũ.
@@ -40,7 +45,7 @@ Không đặt mật khẩu hoặc key trong repo hoặc trong biến `NEXT_PUBLI
 ## Biến môi trường frontend
 
 ```dotenv
-NEXT_PUBLIC_API_URL=https://your-backend.up.railway.app
+NEXT_PUBLIC_API_URL=https://bookish-api-production-d1a8.up.railway.app
 ```
 
 Đặt biến này trước khi build. WebSocket tự chuyển sang `wss://` từ URL HTTPS.

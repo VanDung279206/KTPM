@@ -10,6 +10,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.text.ParseException;
 import java.util.Map;
@@ -83,6 +84,16 @@ public class GlobalExceptionHandler {
                         .statusCode(400)
                         .message(message)
                         .error("VALIDATION_ERROR")
+                        .build());
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    ResponseEntity<ApiResponse<?>> handlingMissingResource() {
+        return ResponseEntity.status(404)
+                .body(ApiResponse.builder()
+                        .statusCode(404)
+                        .message("Không tìm thấy tài nguyên")
+                        .error("NOT_FOUND")
                         .build());
     }
 
