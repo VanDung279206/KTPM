@@ -1,4 +1,5 @@
 'use client';
+import { getBackendImageUrl } from '@/lib/backend-url';
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -235,7 +236,7 @@ export default function AdminDashboardPage() {
                         {i + 1}
                       </span>
                       <div className="relative h-10 w-8 overflow-hidden rounded flex-shrink-0">
-                        <Image src={book.image || 'https://picsum.photos/id/24/400/600'} alt={book.title} fill className="object-cover" />
+                        <Image src={getBackendImageUrl(book.image || 'https://picsum.photos/id/24/400/600')} alt={book.title} fill className="object-cover" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="truncate text-sm font-medium">{book.title}</p>
@@ -332,7 +333,7 @@ export default function AdminDashboardPage() {
                         {i + 1}
                       </span>
                       <div className="relative h-14 w-10 overflow-hidden rounded flex-shrink-0">
-                        <Image src={book.image || 'https://picsum.photos/id/24/400/600'} alt={book.title} fill className="object-cover" />
+                        <Image src={getBackendImageUrl(book.image || 'https://picsum.photos/id/24/400/600')} alt={book.title} fill className="object-cover" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="truncate font-medium text-sm">{book.title}</p>
@@ -358,7 +359,7 @@ export default function AdminDashboardPage() {
                     {lowStock.map((book) => (
                       <div key={book.bookId} className="flex items-center gap-3">
                         <div className="relative h-14 w-10 overflow-hidden rounded flex-shrink-0">
-                          <Image src={book.image || 'https://picsum.photos/id/24/400/600'} alt={book.title} fill className="object-cover" />
+                          <Image src={getBackendImageUrl(book.image || 'https://picsum.photos/id/24/400/600')} alt={book.title} fill className="object-cover" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="truncate font-medium text-sm">{book.title}</p>

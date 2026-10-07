@@ -1,4 +1,5 @@
 'use client';
+import { getBackendImageUrl } from '@/lib/backend-url';
 
 import { useAuthStore } from '@/lib/store/auth-store';
 import { Search, Menu } from 'lucide-react';
@@ -75,7 +76,7 @@ export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
               className="flex items-center gap-2.5 px-2.5 h-9 hover:bg-gray-100 rounded-lg"
             >
               <Avatar className="h-7 w-7">
-                <AvatarImage src={user?.avatarUrl ?? undefined} alt={user?.username} />
+                <AvatarImage src={getBackendImageUrl(user?.avatarUrl ?? undefined)} alt={user?.username} />
                 <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
                   {user?.username?.charAt(0).toUpperCase() || 'A'}
                 </AvatarFallback>

@@ -4,15 +4,21 @@ import com.bookish.bookish.entity.Role;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
+import java.nio.charset.StandardCharsets;
 
 import java.security.Key;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
+    private final Key key;
 
-    private final String SECRET = "bookishsecretkeybookishsecretkey123";
-    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    public JwtUtil(@Value("${jwt.secret:}") String secret) {
+        this.key = secret.isBlank()
+                ? Keys.secretKeyFor(SignatureAlgorithm.HS256)
+                : Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
 
     // 30 ngày — chỉ hết hạn nếu đăng xuất chủ động
     private static final long TOKEN_EXPIRATION = 30L * 24 * 60 * 60 * 1000;

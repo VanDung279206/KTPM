@@ -1,4 +1,5 @@
 'use client';
+import { getBackendImageUrl } from '@/lib/backend-url';
 
 import { useState, useMemo, useEffect } from 'react';
 import { useAuthStore } from '@/lib/store/auth-store';
@@ -333,7 +334,7 @@ export default function AdminBooksPage() {
                     <TableCell>
                       <div className="flex items-center gap-3">
                         {book.image ? (
-                          <img src={book.image} alt={book.title} className="h-14 w-10 rounded object-cover" />
+                          <img src={getBackendImageUrl(book.image)} alt={book.title} className="h-14 w-10 rounded object-cover" />
                         ) : (
                           <div className="flex h-14 w-10 items-center justify-center rounded bg-muted">
                             <ImageIcon className="h-4 w-4 text-muted-foreground" />

@@ -1,4 +1,5 @@
 'use client';
+import { getBackendImageUrl } from '@/lib/backend-url';
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -218,7 +219,7 @@ function ReviewSection({ bookId }: { bookId: number }) {
                   style={{ background: T.accentBg }}
                 >
                   {review.avatarUrl ? (
-                    <Image src={review.avatarUrl} alt={review.username} fill className="object-cover" />
+                    <Image src={getBackendImageUrl(review.avatarUrl)} alt={review.username} fill className="object-cover" />
                   ) : (
                     <span className="font-bold text-[13px]" style={{ color: T.accent }}>
                       {review.username.charAt(0).toUpperCase()}
@@ -437,7 +438,7 @@ export default function BookDetailPage() {
               />
               <div className="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl" style={{ border: T.border }}>
                 <Image
-                  src={book.image || 'https://picsum.photos/id/24/400/600'}
+                  src={getBackendImageUrl(book.image || 'https://picsum.photos/id/24/400/600')}
                   alt={book.title}
                   fill
                   className="object-cover"

@@ -3,6 +3,7 @@ import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { FallingLeaves } from '@/components/falling-leaves';
 import { Chatbot } from '@/components/chatbot';
+import { Suspense } from 'react';
 
 
 export default function MainLayout({
@@ -20,7 +21,9 @@ export default function MainLayout({
 
             {/* Main Content */}
             <main className="flex-1 relative z-10">
-                {children}
+                <Suspense fallback={<div className="p-8 text-center">Đang tải...</div>}>
+                    {children}
+                </Suspense>
             </main>
 
             {/* Footer */}

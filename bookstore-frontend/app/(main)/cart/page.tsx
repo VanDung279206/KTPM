@@ -1,4 +1,5 @@
 'use client';
+import { getBackendImageUrl } from '@/lib/backend-url';
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -300,7 +301,7 @@ export default function CartPage() {
                         <div className="relative w-20 h-28 rounded-2xl overflow-hidden"
                           style={{ background: T.bg }}>
                           {item.image && (
-                            <Image src={item.image} alt={item.title} fill className="object-cover" />
+                            <Image src={getBackendImageUrl(item.image)} alt={item.title} fill className="object-cover" />
                           )}
                         </div>
                       </Link>

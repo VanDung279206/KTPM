@@ -1,4 +1,5 @@
 'use client';
+import { getBackendImageUrl } from '@/lib/backend-url';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -246,7 +247,7 @@ export function Navbar() {
                       onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.opacity = '0.72')}
                     >
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={user.avatarUrl ?? ''} alt={user.username} />
+                        <AvatarImage src={getBackendImageUrl(user.avatarUrl ?? '')} alt={user.username} />
                         <AvatarFallback
                           className="text-[10px] font-semibold text-white"
                           style={{ background: '#0071e3' }}

@@ -1,4 +1,5 @@
 'use client';
+import { getBackendImageUrl } from '@/lib/backend-url';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useAuthStore } from '@/lib/store/auth-store';
@@ -249,7 +250,7 @@ export default function AdminUsersPage() {
                         <TableCell>
                           <div className="flex items-center gap-3">
                             <Avatar>
-                              <AvatarImage src={user.avatarUrl ?? undefined} alt={user.username} />
+                              <AvatarImage src={getBackendImageUrl(user.avatarUrl ?? undefined)} alt={user.username} />
                               <AvatarFallback className="bg-primary/10 text-primary font-medium">
                                 {user.username.charAt(0).toUpperCase()}
                               </AvatarFallback>
@@ -323,7 +324,7 @@ export default function AdminUsersPage() {
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
-                  <AvatarImage src={selectedUser.avatarUrl ?? undefined} alt={selectedUser.username} />
+                  <AvatarImage src={getBackendImageUrl(selectedUser.avatarUrl ?? undefined)} alt={selectedUser.username} />
                   <AvatarFallback className="bg-primary/10 text-primary text-2xl font-bold">
                     {selectedUser.username.charAt(0).toUpperCase()}
                   </AvatarFallback>

@@ -1,4 +1,5 @@
 'use client';
+import { getBackendImageUrl } from '@/lib/backend-url';
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import Image from 'next/image';
@@ -344,7 +345,7 @@ export default function AdminReturnsPage() {
                   )}
                   {selected.imageUrl && (
                     <div className="relative h-48 w-full rounded-lg overflow-hidden mt-2">
-                      <Image src={selected.imageUrl} alt="Ảnh minh chứng" fill className="object-contain" />
+                      <Image src={getBackendImageUrl(selected.imageUrl)} alt="Ảnh minh chứng" fill className="object-contain" />
                     </div>
                   )}
                 </div>

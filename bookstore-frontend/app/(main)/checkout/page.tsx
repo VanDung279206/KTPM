@@ -1,4 +1,5 @@
 'use client';
+import { getBackendImageUrl } from '@/lib/backend-url';
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
@@ -445,7 +446,7 @@ export default function CheckoutPage() {
                       <div className="relative w-16 h-20 flex-shrink-0 rounded-xl overflow-hidden"
                         style={{ background: T.bg }}>
                         {item.image && (
-                          <Image src={item.image} alt={item.title} fill className="object-cover" />
+                          <Image src={getBackendImageUrl(item.image)} alt={item.title} fill className="object-cover" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">

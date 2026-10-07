@@ -40,3 +40,11 @@ ngrok-v3-stable-windows-amd64/
 
 # Local backend secrets and machine-specific configuration
 bookstore-backend/bookish/src/main/resources/application.properties
+
+# Deployment and local verification
+.build-cache/
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.tsbuildinfo

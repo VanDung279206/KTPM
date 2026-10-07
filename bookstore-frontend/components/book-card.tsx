@@ -9,6 +9,7 @@ import { useCartStore } from '@/lib/store/cart-store';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { getBackendImageUrl } from '@/lib/backend-url';
 
 interface BookCardProps {
   book: Book;
@@ -62,7 +63,8 @@ export function BookCard({ book, index = 0 }: BookCardProps) {
             style={{ borderRadius: '12px', background: '#f5f5f7' }}
           >
             <Image
-              src={book.image}
+              src={getBackendImageUrl(book.image)}
+              onError={(event) => { event.currentTarget.src = '/placeholder.svg'; }}
               alt={book.title}
               fill
               className={`object-cover transition-transform duration-500 group-hover:scale-[1.04] ${isOutOfStock ? 'opacity-50' : ''}`}

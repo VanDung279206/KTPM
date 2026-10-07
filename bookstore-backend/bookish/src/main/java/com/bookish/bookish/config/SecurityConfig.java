@@ -32,6 +32,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
 
                         // PUBLIC
+                        .requestMatchers("/health").permitAll()
                         .requestMatchers("/authors").permitAll()
                         .requestMatchers("/categories").permitAll()
                         .requestMatchers("/books").permitAll()

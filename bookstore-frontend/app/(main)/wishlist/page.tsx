@@ -9,17 +9,14 @@ import { toast } from 'sonner';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { wishlistApi, WishlistResponse } from '@/lib/api/wishlist-api';
 import { cartApi } from '@/lib/api/cart-api';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+import { getBackendImageUrl } from '@/lib/backend-url';
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat('vi-VN').format(price) + 'đ';
 }
 
 function getImageUrl(image: string) {
-  if (!image) return '/placeholder.png';
-  if (image.startsWith('http')) return image;
-  return `${API_BASE_URL}/uploads/${image}`;
+  return getBackendImageUrl(image);
 }
 
 export default function WishlistPage() {

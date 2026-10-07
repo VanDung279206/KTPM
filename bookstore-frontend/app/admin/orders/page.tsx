@@ -1,4 +1,5 @@
 'use client';
+import { getBackendImageUrl } from '@/lib/backend-url';
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import Image from 'next/image';
@@ -682,7 +683,7 @@ export default function AdminOrdersPage() {
                   {selected.items.map((item) => (
                     <div key={item.orderItemId} className="flex items-center gap-3 rounded-xl border border-border p-3">
                       <div className="relative h-16 w-12 overflow-hidden rounded-lg flex-shrink-0">
-                        <Image src={item.image || 'https://picsum.photos/id/24/400/600'}
+                        <Image src={getBackendImageUrl(item.image || 'https://picsum.photos/id/24/400/600')}
                           alt={item.title} fill className="object-cover" />
                       </div>
                       <div className="flex-1 min-w-0">

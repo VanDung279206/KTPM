@@ -1,4 +1,5 @@
 'use client';
+import { getBackendImageUrl } from '@/lib/backend-url';
 
 import { useEffect, useState, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -306,7 +307,7 @@ export default function AuthorPage() {
                           style={{ background: '#e8e8ed', border: T.border }}
                         >
                           <Image
-                            src={book.image || 'https://picsum.photos/id/24/400/600'}
+                            src={getBackendImageUrl(book.image || 'https://picsum.photos/id/24/400/600')}
                             alt={book.title}
                             fill
                             className="object-cover transition-transform duration-300 group-hover:scale-105"

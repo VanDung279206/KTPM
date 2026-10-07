@@ -1,4 +1,5 @@
 'use client';
+import { getBackendImageUrl } from '@/lib/backend-url';
 
 import { use, useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
@@ -773,7 +774,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                       <div className="relative w-14 rounded-xl overflow-hidden"
                         style={{ aspectRatio: '3/4', background: T.bg }}>
                         <Image
-                          src={item.image || 'https://picsum.photos/id/24/400/600'}
+                          src={getBackendImageUrl(item.image || 'https://picsum.photos/id/24/400/600')}
                           alt={item.title} fill className="object-cover"
                         />
                       </div>
@@ -868,7 +869,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                     <div className="flex items-center gap-3 mb-5">
                       <div className="relative h-12 w-9 rounded-xl overflow-hidden flex-shrink-0">
                         <Image
-                          src={item.image || 'https://picsum.photos/id/24/400/600'}
+                          src={getBackendImageUrl(item.image || 'https://picsum.photos/id/24/400/600')}
                           alt={item.title} fill className="object-cover"
                         />
                       </div>

@@ -24,7 +24,7 @@ public class AvatarService {
     @Value("${upload.dir:uploads}")
     private String uploadDir;
 
-    @Value("${app.base-url:http://localhost:8080}")
+    @Value("${app.base-url:${server.url:http://localhost:8080}}")
     private String baseUrl;
 
     private static final List<String> ALLOWED_TYPES = List.of(

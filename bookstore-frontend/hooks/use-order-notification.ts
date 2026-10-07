@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { Client, IMessage } from '@stomp/stompjs';
+import { getWebSocketUrl } from '@/lib/backend-url';
 
 export interface OrderNotification {
   orderId: number;
@@ -40,8 +41,8 @@ export function useOrderNotification({
     if (!enabled) return;
 
     const client = new Client({
-      // SockJS endpoint — dùng http, @stomp/stompjs tự wrap thành WebSocket
-      webSocketFactory: () => new WebSocket('ws://localhost:8080/ws/websocket'),
+      // Raw WebSocket transport for the Spring SockJS endpoint.
+      webSocketFactory: () => new WebSocket(getWebSocketUrl()),
 
       // Tắt debug khi production
       debug: (str) => {

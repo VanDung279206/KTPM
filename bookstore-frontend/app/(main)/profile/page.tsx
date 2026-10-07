@@ -1,4 +1,5 @@
 'use client';
+import { getBackendImageUrl } from '@/lib/backend-url';
 
 import { useEffect, useState, useRef, Suspense, startTransition } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -303,7 +304,7 @@ function ProfileContent() {
             >
               <div className="relative w-24 h-24 mx-auto mb-4">
                 {avatarUrl ? (
-                  <Image src={avatarUrl} alt="Avatar" fill className="rounded-full object-cover" />
+                  <Image src={getBackendImageUrl(avatarUrl)} alt="Avatar" fill className="rounded-full object-cover" />
                 ) : (
                   <div
                     className="w-24 h-24 rounded-full flex items-center justify-center"
