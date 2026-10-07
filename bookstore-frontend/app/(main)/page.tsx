@@ -10,7 +10,7 @@ import { bookApi, BookResponse } from '@/lib/api/book-api';
 import { Book } from '@/lib/types';
 
 const BANNERS = [
-  { id: 1, image: '/banners/banner1.png', alt: 'Banner 1', href: '/shop' },
+  { id: 1, image: '/banners/Banner1.png', alt: 'Banner 1', href: '/shop' },
   { id: 2, image: '/banners/banner2.webp', alt: 'Banner 2', href: '/shop?filter=new' },
   { id: 3, image: '/banners/banner3.jpg', alt: 'Banner 3', href: '/shop?filter=sale' },
 ];
