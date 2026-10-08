@@ -2,17 +2,6 @@
 
 Website đang chạy: **[Mở Bookish](https://ktpm-bookish-vandung279206.vercel.app/)**.
 Frontend chạy trên Vercel; backend và MySQL chạy trên Railway.
-Xem [hướng dẫn triển khai](DEPLOYMENT.md) để quản lý cấu hình.
-
-Bookish là hệ thống thương mại điện tử bán sách, gồm giao diện khách hàng, khu vực quản trị và REST API phục vụ các nghiệp vụ tài khoản, danh mục sách, giỏ hàng, đặt hàng, thanh toán, khuyến mãi, đánh giá và xử lý đổi trả.
-
-Repository được tổ chức thành hai ứng dụng:
-
-- `bookstore-frontend`: giao diện web Next.js/React.
-- `bookstore-backend/bookish`: REST API Spring Boot kết nối MySQL.
-- `Database/bookstore_data.sql`: schema và dữ liệu mẫu cho database `bookish`.
-
-> Cấu hình local dùng `application.properties`; cấu hình cloud dùng biến môi trường theo `DEPLOYMENT.md`. Không commit mật khẩu hoặc API key.
 
 ## Mục lục
 
