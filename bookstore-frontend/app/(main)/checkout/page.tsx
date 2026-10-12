@@ -1,5 +1,6 @@
 'use client';
 import { getBackendImageUrl } from '@/lib/backend-url';
+import { PaymentQr } from '@/components/payment-qr';
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
@@ -32,9 +33,6 @@ const T = {
 };
 
 const DEFAULT_SHIPPING_FEE = 50000;
-const MB_BANK_ID   = '970422';
-const ACCOUNT_NO   = '0372555040';
-const ACCOUNT_NAME = 'NGUYEN ANH QUAN';
 const POLL_INTERVAL = 3000;
 const QR_EXPIRY_MS  = 4 * 60 * 1000;
 
@@ -114,6 +112,7 @@ export default function CheckoutPage() {
   const [ready, setReady]                     = useState(false);
 
   const [pendingOrderId, setPendingOrderId] = useState<number | null>(null);
+  const [pendingQrAmount, setPendingQrAmount] = useState<number | null>(null);
   const [qrPaid, setQrPaid]                 = useState(false);
   const [creatingQr, setCreatingQr]         = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -240,6 +239,12 @@ export default function CheckoutPage() {
     setCreatingQr(false);
     if (!result.success) { toast.error(result.message); return; }
     const orderId = Number(result.orderId);
+    const amount = Math.round(Number(result.totalPrice));
+    if (!Number.isSafeInteger(orderId) || orderId <= 0 || !Number.isSafeInteger(amount) || amount <= 0) {
+      toast.error('Không lấy được số tiền của đơn hàng. Vui lòng kiểm tra đơn hàng trước khi thanh toán.');
+      return;
+    }
+    setPendingQrAmount(amount);
     setPendingOrderId(orderId);
     pollRef.current = setInterval(async () => {
       try {
@@ -255,7 +260,7 @@ export default function CheckoutPage() {
     }, POLL_INTERVAL);
   };
 
-  const handleRetryQr = () => { setPendingOrderId(null); setQrExpired(false); setTimeLeft(null); setQrPaid(false); };
+  const handleRetryQr = () => { setPendingOrderId(null); setPendingQrAmount(null); setQrExpired(false); setTimeLeft(null); setQrPaid(false); };
 
   const handleBackToCart = async () => {
     if (pendingOrderId && token && !qrPaid && !qrExpired) {
@@ -267,11 +272,6 @@ export default function CheckoutPage() {
   };
 
   if (!ready) return null;
-
-  const qrSrc = `https://img.vietqr.io/image/${MB_BANK_ID}-${ACCOUNT_NO}-compact2.png`
-    + `?amount=${total}`
-    + `&addInfo=${encodeURIComponent('BookStore ' + (pendingOrderId ?? ''))}`
-    + `&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
 
   // ── Render ───────────────────────────────────────────────────────────────
   return (
@@ -403,11 +403,7 @@ export default function CheckoutPage() {
               {/* QR Code image */}
               {paymentMethod === 'QR_CODE' && pendingOrderId && !qrPaid && !qrExpired && (
                 <div className="mt-6 flex flex-col items-center gap-3">
-                  <img
-                    src={qrSrc} alt="QR"
-                    className="w-56 h-56 rounded-2xl"
-                    style={{ border: T.border }}
-                  />
+                  {pendingQrAmount !== null && <PaymentQr amount={pendingQrAmount} orderId={pendingOrderId} />}
                   {timeLeft !== null && (
                     <div className="flex items-center gap-2 text-[13px]" style={{ color: T.sub }}>
                       <Timer className="h-4 w-4" />

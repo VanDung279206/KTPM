@@ -8,7 +8,7 @@ interface OrderState {
   isLoading: boolean;
   error: string | null;
 
-  checkout: (req: CheckoutRequest, token: string) => Promise<{ success: boolean; message: string; orderId?: number }>;
+  checkout: (req: CheckoutRequest, token: string) => Promise<{ success: boolean; message: string; orderId?: number; totalPrice?: number }>;
   fetchOrders: (token: string) => Promise<void>;
   cancelOrder: (orderId: number, token: string) => Promise<{ success: boolean; message: string }>;
   updateOrder: (orderId: number, req: UpdateOrderRequest, token: string) => Promise<{ success: boolean; message: string }>;
@@ -25,7 +25,7 @@ export const useOrderStore = create<OrderState>()((set) => ({
     try {
       const order = await orderApi.checkout(req, token);
       set((state) => ({ orders: [order, ...state.orders], isLoading: false }));
-      return { success: true, message: 'Đặt hàng thành công!', orderId: order.orderId };
+      return { success: true, message: 'Đặt hàng thành công!', orderId: order.orderId, totalPrice: order.totalPrice };
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Đặt hàng thất bại';
       set({ error: message, isLoading: false });
